@@ -23,4 +23,9 @@ if ($moduleSource -notmatch "ScriptedMusicBeatState\.scriptInit\('SITSongImporte
 if ($moduleSource -match "switchState\(\(\) -> new SITSongImporterEditorState") { throw 'Unsafe deferred scripted-state construction returned.' }
 if ($moduleSource -notmatch 'onStateChangeEnd') { throw 'Transition latch reset hook is missing.' }
 
-Write-Output 'Verification passed: fixtures and v0.8.6 scripted-state transition guards.'
+$editorPath = Join-Path $root 'mod/song-importer-starter/scripts/editor/SITSongImporterEditorState.hxc'
+$editorSource = Get-Content -Raw -LiteralPath $editorPath
+if ($editorSource -match ':[ \t]*(SIT[A-Za-z0-9_]*|Null<SIT|FlxTypedGroup<SIT)') { throw 'Isolation editor contains a custom scripted type annotation.' }
+if ($editorSource -notmatch 'Song Importer works!') { throw 'Minimal editor smoke-test text is missing.' }
+
+Write-Output 'Verification passed: fixtures, transition guards, and compiled-type-only isolation editor.'

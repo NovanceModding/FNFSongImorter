@@ -1,31 +1,18 @@
 import flixel.FlxG;
-import flixel.FlxSprite;
-import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
-import funkin.Paths;
 import funkin.ui.MusicBeatState;
 import funkin.ui.mainmenu.MainMenuState;
 
-/** Minimal vertical timeline editor. UI owns display, never generation rules. */
+/**
+ * v0.8.6 isolation state.
+ *
+ * Keep this class limited to compiled engine types until its construction is
+ * confirmed in the real game. The editor features will then be restored one
+ * dependency at a time; do not add SIT* field or signature types here yet.
+ */
 class SITSongImporterEditorState extends MusicBeatState
 {
-  static final GRID_X:Float = 170;
-  static final GRID_Y:Float = 110;
-  static final LANE_W:Float = 64;
-  static final GRID_H:Float = 480;
-
-  var config:SITProjectConfig;
-  var notes:Array<SITGeneratedNote> = [];
-  var noteViews:FlxTypedGroup<SITNoteView>;
-  var selected:Null<SITNoteView> = null;
-  var input:SITInputFrame;
-  var pixelsPerMs:Float = 0.22;
-  var viewStartMs:Float = 0;
-  var playhead:FlxSprite;
-  var status:FlxText;
-  var audioPlaying:Bool = false;
-
   public function new()
   {
     super();
@@ -33,209 +20,31 @@ class SITSongImporterEditorState extends MusicBeatState
 
   override function create():Void
   {
+    // MusicBeatState installs its normal state lifecycle and camera-dependent
+    // UI before this state customizes the already-created primary camera.
     super.create();
+
     FlxG.camera.bgColor = 0xFF12151C;
-    config = new SITProjectConfig();
-    input = new SITInputFrame();
 
-    var title = new FlxText(24, 20, FlxG.width - 48,
-      "Song Importer — Phase 1\nG Generate | click/tap add/select | Del/right-click delete | wheel zoom | Space audio | E intermediate | V chart preview | Esc back",
-      18);
-    title.color = FlxColor.WHITE;
-    add(title);
+    var text = new FlxText(0, 0, FlxG.width,
+      'Song Importer works!\nESC to return.', 32);
+    text.screenCenter();
+    text.alignment = 'center';
+    text.color = FlxColor.WHITE;
+    add(text);
 
-    for (lane in 0...4)
-    {
-      var column = new FlxSprite(GRID_X + lane * LANE_W, GRID_Y);
-      column.makeGraphic(Std.int(LANE_W - 2), Std.int(GRID_H), lane % 2 == 0 ? 0xFF242A36 : 0xFF2D3442);
-      add(column);
-
-      var label = new FlxText(GRID_X + lane * LANE_W, GRID_Y - 25, LANE_W, Std.string(lane + 1), 16);
-      label.alignment = 'center';
-      add(label);
-    }
-
-    noteViews = new FlxTypedGroup<SITNoteView>();
-    add(noteViews);
-
-    playhead = new FlxSprite(GRID_X, GRID_Y + GRID_H - 2);
-    playhead.makeGraphic(Std.int(LANE_W * 4), 3, FlxColor.CYAN);
-    add(playhead);
-
-    status = new FlxText(GRID_X + LANE_W * 4 + 24, GRID_Y, 390, '', 16);
-    add(status);
-    regenerate();
+    trace('[Song Importer] Minimal v0.8.6 editor state created successfully.');
   }
 
   override function update(elapsed:Float):Void
   {
     super.update(elapsed);
-    input.poll();
 
     if (FlxG.keys.justPressed.ESCAPE)
     {
-      if (FlxG.sound.music != null) FlxG.sound.music.stop();
+      // MainMenuState is compiled, so the standard deferred constructor form
+      // used throughout v0.8.6 is appropriate here.
       FlxG.switchState(() -> new MainMenuState());
-      return;
     }
-    if (FlxG.keys.justPressed.G) regenerate();
-    if (FlxG.keys.justPressed.E) exportData();
-    if (FlxG.keys.justPressed.V) exportVSlicePreview();
-    if (FlxG.keys.justPressed.SPACE) toggleAudio();
-
-    if (input.zoomDelta != 0)
-    {
-      pixelsPerMs += input.zoomDelta * 0.025;
-      if (pixelsPerMs < 0.08) pixelsPerMs = 0.08;
-      if (pixelsPerMs > 0.8) pixelsPerMs = 0.8;
-      layoutNotes();
-    }
-
-    if (input.primaryPressed && pointInsideGrid(input.x, input.y)) handlePrimary(input.x, input.y);
-    if (input.secondaryPressed || FlxG.keys.justPressed.DELETE || FlxG.keys.justPressed.BACKSPACE) deleteSelected();
-
-    var positionMs:Float = 0;
-    if (audioPlaying && FlxG.sound.music != null) positionMs = FlxG.sound.music.time;
-    playhead.y = timeToY(positionMs);
-    playhead.visible = playhead.y >= GRID_Y && playhead.y <= GRID_Y + GRID_H;
-  }
-
-  function regenerate():Void
-  {
-    var analyzer = new SITMockAudioAnalyzer();
-    var generator = new SITChartGenerator();
-    notes = generator.generate(analyzer.analyze(config), config);
-    selected = null;
-    rebuildViews();
-    setStatus('Generated ' + notes.length + ' Normal notes from mock analysis.');
-  }
-
-  function rebuildViews():Void
-  {
-    noteViews.clear();
-    for (note in notes)
-    {
-      var view = new SITNoteView(note);
-      noteViews.add(view);
-    }
-    layoutNotes();
-  }
-
-  function layoutNotes():Void
-  {
-    for (view in noteViews.members)
-    {
-      if (view == null) continue;
-      view.x = GRID_X + view.note.lane * LANE_W + 5;
-      view.y = timeToY(view.note.timestampMs) - view.height / 2;
-      view.visible = view.y >= GRID_Y - view.height && view.y <= GRID_Y + GRID_H;
-    }
-  }
-
-  function handlePrimary(x:Float, y:Float):Void
-  {
-    var hit:Null<SITNoteView> = findNoteAt(x, y);
-    if (hit != null)
-    {
-      selectView(hit);
-      return;
-    }
-
-    var lane:Int = Std.int((x - GRID_X) / LANE_W);
-    var rawTime:Float = yToTime(y);
-    var snapped:Float = Math.round(rawTime / config.snapMs) * config.snapMs;
-    var note = new SITGeneratedNote(snapped, lane, 0, SITNoteOwner.PLAYER,
-      SITSourceType.OTHER, config.difficulty);
-    notes.push(note);
-    var view = new SITNoteView(note);
-    noteViews.add(view);
-    layoutNotes();
-    selectView(view);
-    setStatus('Added lane ' + (lane + 1) + ' at ' + snapped + ' ms.');
-  }
-
-  function findNoteAt(x:Float, y:Float):Null<SITNoteView>
-  {
-    for (view in noteViews.members)
-    {
-      if (view != null && view.visible && x >= view.x && x <= view.x + view.width
-        && y >= view.y && y <= view.y + view.height) return view;
-    }
-    return null;
-  }
-
-  function selectView(view:SITNoteView):Void
-  {
-    if (selected != null) selected.setSelected(false);
-    selected = view;
-    selected.setSelected(true);
-    setStatus('Selected: ' + view.note.timestampMs + ' ms, lane ' + (view.note.lane + 1)
-      + ', ' + view.note.owner + ', ' + view.note.source);
-  }
-
-  function deleteSelected():Void
-  {
-    if (selected == null) return;
-    notes.remove(selected.note);
-    noteViews.remove(selected, true);
-    selected.destroy();
-    selected = null;
-    setStatus('Deleted note. ' + notes.length + ' remain.');
-  }
-
-  function toggleAudio():Void
-  {
-    if (audioPlaying)
-    {
-      FlxG.sound.music.stop();
-      audioPlaying = false;
-      setStatus('Preview stopped.');
-    }
-    else
-    {
-      // Paths.music resolves base or mod-overridden assets through V-Slice.
-      FlxG.sound.playMusic(Paths.music(config.audioAssetId), 0.35, false);
-      audioPlaying = true;
-      setStatus('Previewing existing music asset: ' + config.audioAssetId);
-    }
-  }
-
-  function exportData():Void
-  {
-    var exporter = new SITChartExporter();
-    exporter.promptIntermediateSave(notes, config, function(result:String)
-    {
-      setStatus('Export result: ' + result + '. See example-vslice-chart.json for the conversion preview.');
-    });
-  }
-
-  function exportVSlicePreview():Void
-  {
-    var exporter = new SITChartExporter();
-    exporter.promptVSlicePreviewSave(notes, config, function(result:String)
-    {
-      setStatus('V-Slice chart preview export: ' + result + '. It still needs song metadata and audio assets.');
-    });
-  }
-
-  function pointInsideGrid(x:Float, y:Float):Bool
-  {
-    return x >= GRID_X && x < GRID_X + LANE_W * 4 && y >= GRID_Y && y <= GRID_Y + GRID_H;
-  }
-
-  function timeToY(timeMs:Float):Float
-  {
-    return GRID_Y + GRID_H - (timeMs - viewStartMs) * pixelsPerMs;
-  }
-
-  function yToTime(y:Float):Float
-  {
-    return viewStartMs + (GRID_Y + GRID_H - y) / pixelsPerMs;
-  }
-
-  function setStatus(message:String):Void
-  {
-    status.text = message + '\n\nMode: ' + config.playMode + '\nDifficulty: ' + config.difficulty
-      + '\nAudio ref: music/' + config.audioAssetId + '\nZoom: ' + Std.int(pixelsPerMs * 100) + '%';
   }
 }

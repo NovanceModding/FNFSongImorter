@@ -17,12 +17,10 @@ the engine research and integration limits.
 3. Enable **Song Importer Starter** in the in-game Mods menu, then restart or
    reload mods.
 4. From most game screens, press **F6**. The global module opens the editor.
-5. Press **G** to regenerate, click/tap an empty lane to add, click/tap a note
-   to select it, and press **Delete/Backspace** (or right-click) to delete it.
-   Mouse wheel zooms. **Space** previews the existing `freakyMenu` music asset.
-   **E** opens the platform save dialog for an intermediate JSON export;
-   **V** exports the V-Slice chart-data preview.
-   **Escape** returns to the main menu.
+5. During the current v0.8.6 compatibility isolation test, the editor displays
+   only a confirmation message. **Escape** returns to the main menu. The Phase 1
+   controls remain separated in their scripts but will be reintroduced only
+   after this minimal state is confirmed by the real game runtime.
 
 The editor entry hotkey is deliberate. A scripted state is supported, but the
 stock main menu does not expose a stable data-driven registry for arbitrary menu
