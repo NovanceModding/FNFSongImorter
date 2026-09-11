@@ -4,8 +4,7 @@
   "contributors": [
     { "name": "Novance Modding" }
   ],
-  "api_version": "0.8.0",
+  "api_version": "0.8.6",
   "mod_version": "0.1.0",
   "license": "CSOL"
 }
-

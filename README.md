@@ -4,9 +4,9 @@ This repository is intentionally a small **Polymod/HScript mod**, not a fork of
 the whole Friday Night Funkin' engine. It proves the replaceable data pipeline
 and a four-lane editor without pretending to contain audio analysis.
 
-The template targets the official Funkin `main` tree at commit
-`b2215482c25c5e98a72ac47b4807018934480d01` (2026-08-23), whose mod API accepts
-`0.8.x` mods and whose chart schema is `2.0.0`. See `docs/ARCHITECTURE.md` for
+The template targets the official Funkin **v0.8.6** tag at commit
+`ee9d492becfc1178b2c80487167d09a880f90146`, whose mod API accepts `0.8.x` mods
+and whose chart schema is `2.0.0`. See `docs/ARCHITECTURE.md` for
 the engine research and integration limits.
 
 ## Install and run
@@ -69,7 +69,7 @@ future `0.9.x` releases may require small integration updates.
 ## Official references used
 
 - [Funkin source repository](https://github.com/FunkinCrew/Funkin)
-- [Current Polymod handler and API rule](https://github.com/FunkinCrew/Funkin/blob/b2215482c25c5e98a72ac47b4807018934480d01/source/funkin/modding/PolymodHandler.hx)
-- [Current song/chart models](https://github.com/FunkinCrew/Funkin/blob/b2215482c25c5e98a72ac47b4807018934480d01/source/funkin/data/song/SongData.hx)
-- [Current official chart editor](https://github.com/FunkinCrew/Funkin/blob/b2215482c25c5e98a72ac47b4807018934480d01/source/funkin/ui/debug/charting/ChartEditorState.hx)
+- [v0.8.6 Polymod handler and API rule](https://github.com/FunkinCrew/Funkin/blob/ee9d492becfc1178b2c80487167d09a880f90146/source/funkin/modding/PolymodHandler.hx)
+- [v0.8.6 song/chart models](https://github.com/FunkinCrew/Funkin/blob/ee9d492becfc1178b2c80487167d09a880f90146/source/funkin/data/song/SongData.hx)
+- [v0.8.6 official chart editor](https://github.com/FunkinCrew/Funkin/blob/ee9d492becfc1178b2c80487167d09a880f90146/source/funkin/ui/debug/charting/ChartEditorState.hx)
 - [Official scripted-class documentation](https://funkincrew.github.io/funkin-modding-docs/21-scripted-classes/21-00-scripted-classes.html)

@@ -1,11 +1,15 @@
 import flixel.FlxG;
 import funkin.modding.module.Module;
 import funkin.modding.events.ScriptEvent.UpdateScriptEvent;
+import funkin.modding.events.ScriptEvent.StateChangeScriptEvent;
+import funkin.ui.ScriptedMusicBeatState;
 
 /** Global, automatically instantiated module that provides the Phase 1 entry. */
 class SITSongImporterModule extends Module
 {
   var opening:Bool = false;
+  var editorActive:Bool = false;
+  var sourceState:Dynamic = null;
 
   public function new()
   {
@@ -15,10 +19,50 @@ class SITSongImporterModule extends Module
 
   override public function onUpdate(event:UpdateScriptEvent):Void
   {
-    if (!opening && FlxG.keys.justPressed.F6)
+    // Module update events normally come from MusicBeatState.update(), but an
+    // explicit guard keeps this safe if the dispatcher changes in the future.
+    if (FlxG.state == null) return;
+
+    // A state can cancel its outro. If that happens, no STATE_CHANGE_END event
+    // arrives, so release the latch once we know the old state stayed active.
+    if (opening && FlxG.state == sourceState && !FlxG.keys.justPressed.F6)
     {
-      opening = true;
-      FlxG.switchState(() -> new SITSongImporterEditorState());
+      opening = false;
+      editorActive = false;
+      sourceState = null;
     }
+
+    if (!opening && !editorActive && FlxG.keys.justPressed.F6)
+    {
+      // Scripted states are proxy instances. v0.8.6's own scripted-state reload
+      // code constructs them through ScriptedMusicBeatState.scriptInit().
+      // Construct before requesting the transition so Flixel never receives a
+      // callback which can resolve to null after destroying the current state.
+      var editorState:Dynamic = ScriptedMusicBeatState.scriptInit('SITSongImporterEditorState');
+      if (editorState == null)
+      {
+        trace('[Song Importer] Could not instantiate SITSongImporterEditorState.');
+        return;
+      }
+
+      opening = true;
+      editorActive = true;
+      sourceState = FlxG.state;
+      FlxG.switchState(editorState);
+    }
+  }
+
+  override public function onStateChangeBegin(event:StateChangeScriptEvent):Void
+  {
+    // Entering the editor begins while `opening` is true. A later transition
+    // beginning with `opening == false` therefore means the editor is leaving.
+    if (editorActive && !opening) editorActive = false;
+  }
+
+  override public function onStateChangeEnd(event:StateChangeScriptEvent):Void
+  {
+    // Reset after both entering and leaving, so F6 is reusable after Escape.
+    opening = false;
+    sourceState = null;
   }
 }

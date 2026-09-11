@@ -2,14 +2,20 @@
 
 ## What the official V-Slice code says
 
-This starter was checked against the official `FunkinCrew/Funkin` `main` branch
-at commit `b2215482c25c5e98a72ac47b4807018934480d01`.
+This starter was checked against the official `FunkinCrew/Funkin` **v0.8.6**
+tag at commit `ee9d492becfc1178b2c80487167d09a880f90146`.
 
 - Mods live below `mods/<mod-id>/` and use `_polymod_meta.json`. The current
-  engine rule in `PolymodHandler` is `>=0.8.0 <0.9.0`.
+  engine rule in `PolymodHandler` is `>=0.8.0 <0.9.0`. This mod declares
+  `0.8.6` because it targets that exact release and uses `scriptInit`, rather
+  than claiming compatibility with every earlier 0.8.x implementation.
 - `.hxc` files below a mod's `scripts/` directory are Polymod scripted classes.
   `MusicBeatState` and `Module` are explicitly scriptable. Modules are created
   at mod load and receive global update/state/gameplay events.
+- A scripted state must be instantiated through its generated proxy API. In
+  v0.8.6, the engine's own reload plugin calls
+  `ScriptedMusicBeatState.scriptInit(className)` and passes that instance to
+  `FlxG.switchState`. This starter follows that exact dynamic-state pattern.
 - `MusicBeatState` is the useful FNF form of a HaxeFlixel `FlxState`: it is a
   screen-sized collection of objects and also dispatches beat/script events.
 - The official chart model is `SongChartData`: version, per-difficulty scroll
@@ -86,4 +92,3 @@ album/freeplay/story registration desired by the mod. The next converter should
 construct or validate both metadata and chart files using the current registry
 schemas. Keep `SITGeneratedNote` unchanged; only the export boundary needs to
 track future V-Slice schema revisions.
-

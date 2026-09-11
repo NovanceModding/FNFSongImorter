@@ -104,6 +104,8 @@ and undo/redo do not belong in Phase 1.
 ### `integration/SITSongImporterModule.hxc`
 
 V-Slice automatically instantiates scripted Modules. Every frame, this one
-checks F6 and transitions to the custom state. `opening` prevents duplicate
-transitions. Replace this entry adapter if the engine later gains a public custom
-menu registry.
+checks F6 and transitions to the custom state. It asks
+`ScriptedMusicBeatState.scriptInit` to create the real proxy state before giving
+it to Flixel. `opening` prevents duplicate transitions, while state-change hooks
+reset the latch after entering/leaving so F6 works again. Replace this entry
+adapter if the engine later gains a public custom menu registry.
