@@ -1,0 +1,15 @@
+{
+  "format": "song-importer-intermediate",
+  "version": 1,
+  "songId": "mock-song",
+  "audioAssetId": "freakyMenu",
+  "playMode": "vs",
+  "notes": [
+    { "timestampMs": 500, "lane": 0, "durationMs": 0, "owner": "player", "source": "melody", "difficulty": "normal" },
+    { "timestampMs": 750, "lane": 1, "durationMs": 0, "owner": "player", "source": "drums", "difficulty": "normal" },
+    { "timestampMs": 1000, "lane": 2, "durationMs": 0, "owner": "opponent", "source": "vocals", "difficulty": "normal" },
+    { "timestampMs": 1250, "lane": 3, "durationMs": 250, "owner": "player", "source": "bass", "difficulty": "normal" },
+    { "timestampMs": 1500, "lane": 0, "durationMs": 0, "owner": "player", "source": "other", "difficulty": "normal" }
+  ]
+}
+

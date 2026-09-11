@@ -1,0 +1,22 @@
+/** Editable internal note. This is deliberately not V-Slice SongNoteData. */
+class SITGeneratedNote
+{
+  public var timestampMs:Float;
+  public var lane:Int;
+  public var durationMs:Float;
+  public var owner:String;
+  public var source:String;
+  public var difficulty:String;
+
+  public function new(timestampMs:Float, lane:Int, durationMs:Float,
+      owner:String, source:String, difficulty:String)
+  {
+    this.timestampMs = timestampMs;
+    this.lane = lane;
+    this.durationMs = durationMs;
+    this.owner = owner;
+    this.source = source;
+    this.difficulty = difficulty;
+  }
+}
+

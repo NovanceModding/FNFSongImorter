@@ -1,0 +1,12 @@
+{
+  "format": "song-importer-mock-analysis",
+  "audioAssetId": "freakyMenu",
+  "events": [
+    { "timestampMs": 500, "durationMs": 0, "strength": 0.95, "pitch": 60, "source": "melody" },
+    { "timestampMs": 750, "durationMs": 0, "strength": 0.70, "pitch": null, "source": "drums" },
+    { "timestampMs": 1000, "durationMs": 0, "strength": 0.90, "pitch": 64, "source": "vocals" },
+    { "timestampMs": 1250, "durationMs": 250, "strength": 0.80, "pitch": 55, "source": "bass" },
+    { "timestampMs": 1500, "durationMs": 0, "strength": 0.65, "pitch": null, "source": "other" }
+  ]
+}
+

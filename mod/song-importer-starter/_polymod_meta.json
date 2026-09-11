@@ -1,0 +1,11 @@
+{
+  "title": "Song Importer Starter",
+  "description": "Phase 1 mock chart generator and editor template.",
+  "contributors": [
+    { "name": "Novance Modding" }
+  ],
+  "api_version": "0.8.0",
+  "mod_version": "0.1.0",
+  "license": "CSOL"
+}
+

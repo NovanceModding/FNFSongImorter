@@ -1,0 +1,10 @@
+/** String constants keep this boundary easy to serialize and HScript-friendly. */
+class SITSourceType
+{
+  public static final VOCALS:String = 'vocals';
+  public static final MELODY:String = 'melody';
+  public static final BASS:String = 'bass';
+  public static final DRUMS:String = 'drums';
+  public static final OTHER:String = 'other';
+}
+

@@ -1,0 +1,25 @@
+/**
+ * Small, mutable project settings object.
+ *
+ * The UI may edit this object later, but generator classes only receive it as
+ * input. That direction keeps UI code out of the chart pipeline.
+ */
+class SITProjectConfig
+{
+  public var songId:String;
+  public var audioAssetId:String;
+  public var difficulty:String;
+  public var playMode:String;
+  public var snapMs:Float;
+
+  public function new()
+  {
+    songId = 'mock-song';
+    // This asset ships with V-Slice. Replace it later with a mod music asset.
+    audioAssetId = 'freakyMenu';
+    difficulty = SITDifficulty.NORMAL;
+    playMode = SITPlayMode.VS;
+    snapMs = 125.0;
+  }
+}
+

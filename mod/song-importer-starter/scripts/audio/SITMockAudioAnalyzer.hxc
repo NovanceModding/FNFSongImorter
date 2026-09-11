@@ -1,0 +1,21 @@
+/**
+ * Phase 1 stand-in for BPM/onset/stem analysis.
+ * A future analyzer should keep the same `analyze(config)` output contract.
+ */
+class SITMockAudioAnalyzer
+{
+  public function new() {}
+
+  public function analyze(config:SITProjectConfig):Array<SITAnalysisEvent>
+  {
+    // The source variety makes the VS owner policy visible in the prototype.
+    return [
+      new SITAnalysisEvent(500, 0, 0.95, 60, SITSourceType.MELODY),
+      new SITAnalysisEvent(750, 0, 0.70, null, SITSourceType.DRUMS),
+      new SITAnalysisEvent(1000, 0, 0.90, 64, SITSourceType.VOCALS),
+      new SITAnalysisEvent(1250, 250, 0.80, 55, SITSourceType.BASS),
+      new SITAnalysisEvent(1500, 0, 0.65, null, SITSourceType.OTHER)
+    ];
+  }
+}
+

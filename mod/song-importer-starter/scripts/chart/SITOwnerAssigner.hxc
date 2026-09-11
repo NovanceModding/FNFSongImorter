@@ -1,0 +1,16 @@
+/** Phase 1 Solo/VS ownership policy. */
+class SITOwnerAssigner
+{
+  public function new() {}
+
+  public function ownerFor(event:SITAnalysisEvent, playMode:String):String
+  {
+    if (playMode == SITPlayMode.SOLO) return SITNoteOwner.SHARED;
+
+    // Example configurable intent: vocals go to opponent; everything else to
+    // player. A later settings map can replace this method.
+    if (event.source == SITSourceType.VOCALS) return SITNoteOwner.OPPONENT;
+    return SITNoteOwner.PLAYER;
+  }
+}
+

@@ -1,0 +1,30 @@
+import flixel.FlxSprite;
+import flixel.util.FlxColor;
+
+/** Thin visual wrapper. The GeneratedNote remains the source of truth. */
+class SITNoteView extends FlxSprite
+{
+  public var note:SITGeneratedNote;
+
+  public function new(note:SITGeneratedNote)
+  {
+    super();
+    this.note = note;
+    makeGraphic(54, 14, colorForOwner(note.owner));
+  }
+
+  public function setSelected(selected:Bool):Void
+  {
+    alpha = selected ? 1.0 : 0.72;
+    scale.set(selected ? 1.12 : 1.0, selected ? 1.12 : 1.0);
+    updateHitbox();
+  }
+
+  function colorForOwner(owner:String):Int
+  {
+    if (owner == SITNoteOwner.OPPONENT) return FlxColor.RED;
+    if (owner == SITNoteOwner.SHARED) return FlxColor.YELLOW;
+    return FlxColor.LIME;
+  }
+}
+

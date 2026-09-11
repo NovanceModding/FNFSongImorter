@@ -1,0 +1,50 @@
+import flixel.FlxG;
+
+/**
+ * One-frame semantic input snapshot. Editor actions ask for a primary action,
+ * not directly for a mouse click, leaving room for touch gestures later.
+ */
+class SITInputFrame
+{
+  public var x:Float = 0;
+  public var y:Float = 0;
+  public var primaryPressed:Bool = false;
+  public var secondaryPressed:Bool = false;
+  public var zoomDelta:Float = 0;
+
+  public function new() {}
+
+  public function poll():Void
+  {
+    primaryPressed = false;
+    secondaryPressed = false;
+    zoomDelta = 0;
+
+    // Reflection matters cross-target: HaxeFlixel conditionally compiles its
+    // mouse/touch frontends, while this same .hxc file is loaded at runtime.
+    var mouse:Dynamic = Reflect.field(FlxG, 'mouse');
+    if (mouse != null)
+    {
+      x = mouse.screenX;
+      y = mouse.screenY;
+      primaryPressed = mouse.justPressed;
+      secondaryPressed = mouse.justPressedRight;
+      zoomDelta = mouse.wheel;
+    }
+
+    // FlxG.touches exists on HaxeFlixel targets. First-touch maps to the same
+    // primary semantic action as a mouse click; no editor logic changes.
+    var touches:Dynamic = Reflect.field(FlxG, 'touches');
+    if (touches != null)
+    {
+      var getFirst = Reflect.field(touches, 'getFirst');
+      var touch:Dynamic = Reflect.callMethod(touches, getFirst, []);
+      if (touch != null)
+      {
+        x = touch.screenX;
+        y = touch.screenY;
+        primaryPressed = touch.justPressed;
+      }
+    }
+  }
+}

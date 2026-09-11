@@ -1,0 +1,7 @@
+class SITDifficulty
+{
+  public static final EASY:String = 'easy';
+  public static final NORMAL:String = 'normal';
+  public static final HARD:String = 'hard';
+}
+

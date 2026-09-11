@@ -1,0 +1,31 @@
+/**
+ * Deterministic event selection. Normal is the completed Phase 1 behavior.
+ * Easy/Hard are explicit extension points, not random deletion modes.
+ */
+class SITDifficultyPolicy
+{
+  public function new() {}
+
+  public function select(events:Array<SITAnalysisEvent>, difficulty:String):Array<SITAnalysisEvent>
+  {
+    var result:Array<SITAnalysisEvent> = [];
+
+    for (event in events)
+    {
+      if (difficulty == SITDifficulty.EASY)
+      {
+        // Temporary rule: retain intentional strong accents.
+        if (event.strength >= 0.85) result.push(event);
+      }
+      else
+      {
+        // Normal works now. Hard currently preserves the same input; later it
+        // should receive additional subdivision/ornament events upstream.
+        result.push(event);
+      }
+    }
+
+    return result;
+  }
+}
+

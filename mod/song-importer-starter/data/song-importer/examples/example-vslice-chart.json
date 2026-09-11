@@ -1,0 +1,16 @@
+{
+  "version": "2.0.0",
+  "scrollSpeed": { "normal": 1.0 },
+  "events": [],
+  "notes": {
+    "normal": [
+      { "t": 500, "d": 0, "l": 0 },
+      { "t": 750, "d": 1, "l": 0 },
+      { "t": 1000, "d": 6, "l": 0 },
+      { "t": 1250, "d": 3, "l": 250 },
+      { "t": 1500, "d": 0, "l": 0 }
+    ]
+  },
+  "generatedBy": "Song Importer Starter 0.1.0"
+}
+

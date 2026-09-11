@@ -1,0 +1,24 @@
+/**
+ * Engine-independent observation produced by an analyzer.
+ * All times are milliseconds. `pitch` is nullable because drums/onsets often
+ * have no useful single pitch.
+ */
+class SITAnalysisEvent
+{
+  public var timestampMs:Float;
+  public var durationMs:Float;
+  public var strength:Float;
+  public var pitch:Null<Float>;
+  public var source:String;
+
+  public function new(timestampMs:Float, durationMs:Float, strength:Float,
+      pitch:Null<Float>, source:String)
+  {
+    this.timestampMs = timestampMs;
+    this.durationMs = durationMs;
+    this.strength = strength;
+    this.pitch = pitch;
+    this.source = source;
+  }
+}
+

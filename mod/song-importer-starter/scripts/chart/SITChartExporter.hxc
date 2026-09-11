@@ -1,0 +1,74 @@
+import haxe.Json;
+import funkin.util.FileUtil;
+
+/** Converts internal notes at the boundary, never inside the generator. */
+class SITChartExporter
+{
+  public function new() {}
+
+  public function intermediateJson(notes:Array<SITGeneratedNote>, config:SITProjectConfig):String
+  {
+    var outputNotes:Array<Dynamic> = [];
+    for (note in notes)
+    {
+      outputNotes.push({
+        timestampMs: note.timestampMs,
+        lane: note.lane,
+        durationMs: note.durationMs,
+        owner: note.owner,
+        source: note.source,
+        difficulty: note.difficulty
+      });
+    }
+
+    return Json.stringify({
+      format: 'song-importer-intermediate',
+      version: 1,
+      songId: config.songId,
+      audioAssetId: config.audioAssetId,
+      playMode: config.playMode,
+      notes: outputNotes
+    }, null, '  ');
+  }
+
+  /**
+   * Preview of the V-Slice 2.0 chart portion. This is not a complete song mod:
+   * real song metadata and audio files still need to be supplied.
+   */
+  public function vSliceChartPreviewJson(notes:Array<SITGeneratedNote>, config:SITProjectConfig):String
+  {
+    var nativeNotes:Array<Dynamic> = [];
+    for (note in notes)
+    {
+      // Official schema: lane 0-3 is player strumline; 4-7 is opponent.
+      var data:Int = note.lane;
+      if (note.owner == SITNoteOwner.OPPONENT) data += 4;
+      nativeNotes.push({t: note.timestampMs, d: data, l: note.durationMs});
+    }
+
+    var notesByDifficulty:Dynamic = {};
+    Reflect.setField(notesByDifficulty, config.difficulty, nativeNotes);
+    var speeds:Dynamic = {};
+    Reflect.setField(speeds, config.difficulty, 1.0);
+
+    return Json.stringify({
+      version: '2.0.0',
+      scrollSpeed: speeds,
+      events: [],
+      notes: notesByDifficulty,
+      generatedBy: 'Song Importer Starter 0.1.0'
+    }, null, '  ');
+  }
+
+  public function promptIntermediateSave(notes:Array<SITGeneratedNote>, config:SITProjectConfig,
+      callback:String->Void):Void
+  {
+    FileUtil.writeFileReference(config.songId + '-generated.json', intermediateJson(notes, config), callback);
+  }
+
+  public function promptVSlicePreviewSave(notes:Array<SITGeneratedNote>, config:SITProjectConfig,
+      callback:String->Void):Void
+  {
+    FileUtil.writeFileReference(config.songId + '-chart.json', vSliceChartPreviewJson(notes, config), callback);
+  }
+}

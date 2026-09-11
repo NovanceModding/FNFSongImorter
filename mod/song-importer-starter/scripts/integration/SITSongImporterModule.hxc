@@ -1,0 +1,24 @@
+import flixel.FlxG;
+import funkin.modding.module.Module;
+import funkin.modding.events.ScriptEvent.UpdateScriptEvent;
+
+/** Global, automatically instantiated module that provides the Phase 1 entry. */
+class SITSongImporterModule extends Module
+{
+  var opening:Bool = false;
+
+  public function new()
+  {
+    // Unique module/class IDs reduce collisions with other installed mods.
+    super('novance-song-importer-entry', 1000);
+  }
+
+  override public function onUpdate(event:UpdateScriptEvent):Void
+  {
+    if (!opening && FlxG.keys.justPressed.F6)
+    {
+      opening = true;
+      FlxG.switchState(() -> new SITSongImporterEditorState());
+    }
+  }
+}

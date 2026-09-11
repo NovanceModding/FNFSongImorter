@@ -1,0 +1,7 @@
+class SITNoteOwner
+{
+  public static final PLAYER:String = 'player';
+  public static final OPPONENT:String = 'opponent';
+  public static final SHARED:String = 'shared';
+}
+

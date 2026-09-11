@@ -1,0 +1,30 @@
+/** Orchestrates replaceable policies; imports no UI or Flixel classes. */
+class SITChartGenerator
+{
+  var difficultyPolicy:SITDifficultyPolicy;
+  var laneAssigner:SITLaneAssigner;
+  var ownerAssigner:SITOwnerAssigner;
+
+  public function new()
+  {
+    difficultyPolicy = new SITDifficultyPolicy();
+    laneAssigner = new SITLaneAssigner();
+    ownerAssigner = new SITOwnerAssigner();
+  }
+
+  public function generate(events:Array<SITAnalysisEvent>, config:SITProjectConfig):Array<SITGeneratedNote>
+  {
+    var selected = difficultyPolicy.select(events, config.difficulty);
+    var lanes = laneAssigner.assign(selected);
+    var notes:Array<SITGeneratedNote> = [];
+
+    for (i in 0...selected.length)
+    {
+      var event = selected[i];
+      notes.push(new SITGeneratedNote(event.timestampMs, lanes[i], event.durationMs,
+        ownerAssigner.ownerFor(event, config.playMode), event.source, config.difficulty));
+    }
+    return notes;
+  }
+}
+

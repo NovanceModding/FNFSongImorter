@@ -1,0 +1,6 @@
+class SITPlayMode
+{
+  public static final SOLO:String = 'solo';
+  public static final VS:String = 'vs';
+}
+
